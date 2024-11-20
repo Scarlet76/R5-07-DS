@@ -41,12 +41,21 @@ jobs:
       run: |
         git config --global user.name "Scarlet76"
         git config --global user.email "scarlet0ciel0@gmail.com"
-        
+
+        # Vérifier si le fichier existe déjà
+        if git ls-files --error-unmatch "$FILE_NAME" > /dev/null 2>&1; then
+          echo "$FILE_NAME already exists in the repository."
+          
+          # Vérifier si le contenu du fichier est le même
+          if cmp --silent "$FILE_NAME" "$(git show HEAD:$FILE_NAME)"; then
+            echo "$FILE_NAME has not changed. No need to commit."
+            exit 0
+          fi
+        fi
+
         # Ajouter le fichier créé
         git add "$FILE_NAME"
 
-        # Vérifier s'il y a des changements à committer
-        git diff --cached --exit-code || git commit -m "Création de $FILE_NAME avec le contenu de Q4.java"
-
-        # Pousser les changements si un commit a eu lieu
+        # Commit et push
+        git commit -m "Création de $FILE_NAME avec le contenu de Q4.java"
         git push
