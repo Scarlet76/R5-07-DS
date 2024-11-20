@@ -13,10 +13,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Create Q4_archive_date.txt
+    - name: Generate the date and create file
       run: |
         # Récupérer la date au format JJ-MM-AAAA
         DATE=$(date +'%d-%m-%Y')
+
+        # Afficher la date générée pour vérification
+        echo "Generated date: $DATE"
 
         # Créer le fichier texte avec les informations
         echo "Nom et Prénom : Lucas Langlois" > "Q4_archive_${DATE}.txt"
@@ -27,12 +30,21 @@ jobs:
         # Ajouter le contenu de Q4.java
         cat Q4.java >> "Q4_archive_${DATE}.txt"
 
+    - name: List files to check if the file is created
+      run: ls -l
+
     - name: Commit and push changes
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git config --global user.name "Scarlet76"
         git config --global user.email "scarlet0ciel0@gmail.com"
-        git add "Q4_archive_${DATE}.txt"
-        git commit -m "Création de Q4_archive_${DATE}.txt avec le contenu de Q4.java"
-        git push
+
+        # Vérifier si le fichier existe avant de l'ajouter
+        if [ -f "Q4_archive_${DATE}.txt" ]; then
+          git add "Q4_archive_${DATE}.txt"
+          git commit -m "Création de Q4_archive_${DATE}.txt avec le contenu de Q4.java"
+          git push
+        else
+          echo "Le fichier Q4_archive_${DATE}.txt n'a pas été créé. Aucun push effectué."
+        fi
