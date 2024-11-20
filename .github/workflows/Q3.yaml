@@ -1,0 +1,33 @@
+name: Create Q3_archive_java.txt
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create_q3_archive:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Create Q3_archive_java.txt
+      run: |
+        echo "Nom et Prénom : Lucas Langlois" > Q3_archive_java.txt
+        echo "" >> Q3_archive_java.txt
+        echo "Contenu de Q3.java :" >> Q3_archive_java.txt
+        echo "--------------------" >> Q3_archive_java.txt
+        cat Q3.java >> Q3_archive_java.txt
+
+    - name: Commit and push changes
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git config --global user.name "Scarlet76"
+        git config --global user.email "scarlet0ciel0@gmail.com"
+        git add Q3_archive_java.txt
+        git diff --quiet || git commit -m "Création Q3_archive_java.txt"
+        git pull --rebase origin main || git stash && git pull --rebase origin main && git stash pop
+        git push
