@@ -21,12 +21,15 @@ jobs:
         echo "--------------------" >> Q3_archive_java.txt
         cat Q3.java >> Q3_archive_java.txt
 
-    - name: Commit and push changes
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Check if file is different and push changes
       run: |
-        git config --global user.name "Scarlet76"
-        git config --global user.email "scarlet0ciel0@gmail.com"
-        git add Q3_archive_java.txt
-        git commit -m "Création Q3_archive_java.txt"
-        git push
+        # Vérifier si le fichier Q3_archive_java.txt a changé
+        if ! git diff --exit-code Q3_archive_java.txt; then
+          git config --global user.name "Scarlet76"
+          git config --global user.email "scarlet0ciel0@gmail.com"
+          git add Q3_archive_java.txt
+          git commit -m "Création Q3_archive_java.txt"
+          git push
+        else
+          echo "Le fichier est identique, aucun push nécessaire."
+        fi
