@@ -29,5 +29,6 @@ jobs:
         git config --global user.name "Scarlet76"
         git config --global user.email "scarlet0ciel0@gmail.com"
         git add Q2_archive_README.md
-        git commit -m "Création Q2_archive_README.md"
+        git diff --quiet || git commit -m "Création Q2_archive_README.md"
+        git pull --rebase origin main
         git push
