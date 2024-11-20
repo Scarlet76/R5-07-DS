@@ -30,8 +30,9 @@ jobs:
         # Ajouter le contenu de Q4.java
         cat Q4.java >> "Q4_archive_${DATE}.txt"
 
-    - name: List files to check if the file is created
-      run: ls -l
+        # Afficher les fichiers créés pour vérification
+        echo "Files after creation:"
+        ls -l
 
     - name: Commit and push changes
       env:
@@ -39,12 +40,12 @@ jobs:
       run: |
         git config --global user.name "Scarlet76"
         git config --global user.email "scarlet0ciel0@gmail.com"
+        
+        # Ajouter le fichier créé
+        git add "Q4_archive_${DATE}.txt"
 
-        # Vérifier si le fichier existe avant de l'ajouter
-        if [ -f "Q4_archive_${DATE}.txt" ]; then
-          git add "Q4_archive_${DATE}.txt"
-          git commit -m "Création de Q4_archive_${DATE}.txt avec le contenu de Q4.java"
-          git push
-        else
-          echo "Le fichier Q4_archive_${DATE}.txt n'a pas été créé. Aucun push effectué."
-        fi
+        # Vérifier s'il y a des changements à committer
+        git diff --cached --exit-code || git commit -m "Création de Q4_archive_${DATE}.txt avec le contenu de Q4.java"
+
+        # Pousser les changements si un commit a eu lieu
+        git push
