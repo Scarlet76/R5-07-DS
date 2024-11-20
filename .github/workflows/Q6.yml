@@ -1,0 +1,52 @@
+name: Q6 Workflow
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  create_and_push_files:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up date and time
+      id: datetime
+      run: echo "current_datetime=$(date +'%d-%m-%Y-%H%M%S')" >> $GITHUB_ENV
+
+    - name: Create Q6_archive_date.txt
+      run: |
+        echo "Nom Prénom : Lucas Langlois" > Q6_archive_${{ env.current_datetime }}.txt
+        echo "Fichier Q6.java :" >> Q6_archive_${{ env.current_datetime }}.txt
+        cat Q6.java >> Q6_archive_${{ env.current_datetime }}.txt
+        echo "Taille (caractères): $(wc -m < Q6.java)" >> Q6_archive_${{ env.current_datetime }}.txt
+        echo "Nombre de lignes: $(wc -l < Q6.java)" >> Q6_archive_${{ env.current_datetime }}.txt
+
+    - name: Check for previous archive
+      id: check_previous
+      run: |
+        ls -t Q6_archive_*.txt | head -n 2 > archive_list.txt
+        PREVIOUS_ARCHIVE=$(tail -n 1 archive_list.txt)
+        if [ -n "$PREVIOUS_ARCHIVE" ]; then
+          echo "previous_file=$PREVIOUS_ARCHIVE" >> $GITHUB_ENV
+        fi
+
+    - name: Create Q6_différences.txt if previous archive exists
+      if: env.previous_file
+      run: |
+        diff ${{ env.previous_file }} Q6_archive_${{ env.current_datetime }}.txt > Q6_différences.txt || true
+
+    - name: Commit and push changes
+      run: |
+        git config --global user.name "Scarlet76"
+        git config --global user.email "scarlet0ciel0@gmail.com"
+        git add Q6.java Q6_archive_${{ env.current_datetime }}.txt
+        if [ -f Q6_différences.txt ]; then
+          git add Q6_différences.txt
+        fi
+        git commit -m "Ajout du fichier Q6.java, Q6_archive_${{ env.current_datetime }}.txt et Q6_différences.txt"
+        git push
