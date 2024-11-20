@@ -22,13 +22,14 @@ jobs:
         echo "Generated date: $DATE"
 
         # Créer le fichier texte avec les informations
-        echo "Nom et Prénom : Lucas Langlois" > "Q4_archive_${DATE}.txt"
-        echo "" >> "Q4_archive_${DATE}.txt"
-        echo "Contenu de Q4.java :" >> "Q4_archive_${DATE}.txt"
-        echo "--------------------" >> "Q4_archive_${DATE}.txt"
+        FILE_NAME="Q4_archive_${DATE}.txt"
+        echo "Nom et Prénom : Lucas Langlois" > "$FILE_NAME"
+        echo "" >> "$FILE_NAME"
+        echo "Contenu de Q4.java :" >> "$FILE_NAME"
+        echo "--------------------" >> "$FILE_NAME"
         
         # Ajouter le contenu de Q4.java
-        cat Q4.java >> "Q4_archive_${DATE}.txt"
+        cat Q4.java >> "$FILE_NAME"
 
         # Afficher les fichiers créés pour vérification
         echo "Files after creation:"
@@ -42,10 +43,10 @@ jobs:
         git config --global user.email "scarlet0ciel0@gmail.com"
         
         # Ajouter le fichier créé
-        git add "Q4_archive_${DATE}.txt"
+        git add "$FILE_NAME"
 
         # Vérifier s'il y a des changements à committer
-        git diff --cached --exit-code || git commit -m "Création de Q4_archive_${DATE}.txt avec le contenu de Q4.java"
+        git diff --cached --exit-code || git commit -m "Création de $FILE_NAME avec le contenu de Q4.java"
 
         # Pousser les changements si un commit a eu lieu
         git push
