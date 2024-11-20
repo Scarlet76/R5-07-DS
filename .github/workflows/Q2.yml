@@ -1,0 +1,33 @@
+name: Create Q2_archive_README.md
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create_q2_archive:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Create Q2_archive_README.md
+      run: |
+        echo "Nom : Lucas Langlois" > Q2_archive_README.md
+        echo "Date et heure : $(date '+%Y-%m-%d %H:%M:%S')" >> Q2_archive_README.md
+        echo "" >> Q2_archive_README.md
+        echo "Contenu de README.md :" >> Q2_archive_README.md
+        echo "-----------------------" >> Q2_archive_README.md
+        cat README.md >> Q2_archive_README.md
+
+    - name: Commit and push Q2_archive_README.md
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git config --global user.name "Scarlet76"
+        git config --global user.email "scarlet0ciel0@gmail.com"
+        git add Q2_archive_README.md
+        git commit -m "Création Q2_archive_README.md"
+        git push
