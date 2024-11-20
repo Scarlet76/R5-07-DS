@@ -18,8 +18,8 @@ jobs:
 
     - name: Commit and push changes
       run: |
-        git config --global user.name Scarlet76
-        git config --global user.email scarlet0ciel0@gmail.com
+        git config --global user.name "Scarlet76"
+        git config --global user.email "scarlet0ciel0@gmail.com"
         git add Q1_archive_README.md
         git commit -m "Création Q1_archive_README.md"
         git push
