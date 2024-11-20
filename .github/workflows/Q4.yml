@@ -1,39 +1,28 @@
-name: Create Q4_archive_date.txt
+name: Create Q4_archive.txt
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
-  create_q4_archive:
+  create_and_push_file:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Generate the date and create file
+    - name: Set up date
+      id: date
+      run: echo "current_date=$(date +'%d-%m-%Y')" >> $GITHUB_ENV
+
+    - name: Create Q4_archive_date.txt
       run: |
-        # Récupérer la date au format JJ-MM-AAAA
-        DATE=$(date +'%d-%m-%Y')
-
-        # Afficher la date générée pour vérification
-        echo "Generated date: $DATE"
-
-        # Créer le fichier texte avec les informations
-        FILE_NAME="Q4_archive_${DATE}.txt"
-        echo "Nom et Prénom : Lucas Langlois" > "$FILE_NAME"
-        echo "" >> "$FILE_NAME"
-        echo "Contenu de Q4.java :" >> "$FILE_NAME"
-        echo "--------------------" >> "$FILE_NAME"
-        
-        # Ajouter le contenu de Q4.java
-        cat Q4.java >> "$FILE_NAME"
-
-        # Afficher les fichiers créés pour vérification
-        echo "Files after creation:"
-        ls -l
+        echo "Prénom Nom : Lucas Langlois " > Q4_archive_${{ env.current_date }}.txt
+        echo "Fichier Q4.java :" >> Q4_archive_${{ env.current_date }}.txt
+        cat Q4.java >> Q4_archive_${{ env.current_date }}.txt
 
     - name: Commit and push changes
       env:
@@ -41,21 +30,6 @@ jobs:
       run: |
         git config --global user.name "Scarlet76"
         git config --global user.email "scarlet0ciel0@gmail.com"
-
-        # Vérifier si le fichier existe déjà
-        if git ls-files --error-unmatch "$FILE_NAME" > /dev/null 2>&1; then
-          echo "$FILE_NAME already exists in the repository."
-          
-          # Vérifier si le contenu du fichier est le même
-          if cmp --silent "$FILE_NAME" "$(git show HEAD:$FILE_NAME)"; then
-            echo "$FILE_NAME has not changed. No need to commit."
-            exit 0
-          fi
-        fi
-
-        # Ajouter le fichier créé
-        git add "$FILE_NAME"
-
-        # Commit et push
-        git commit -m "Création de $FILE_NAME avec le contenu de Q4.java"
+        git add Q4_archive_${{ env.current_date }}.txt
+        git commit -m "Création Q4_archive_${{ env.current_date }}.txt"
         git push
