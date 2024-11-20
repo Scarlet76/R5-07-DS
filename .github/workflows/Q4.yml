@@ -35,5 +35,4 @@ jobs:
         git config --global user.email "scarlet0ciel0@gmail.com"
         git add "Q4_archive_${DATE}.txt"
         git commit -m "Création de Q4_archive_${DATE}.txt avec le contenu de Q4.java"
-        git pull --rebase origin main || git stash && git pull --rebase origin main && git stash pop
         git push
