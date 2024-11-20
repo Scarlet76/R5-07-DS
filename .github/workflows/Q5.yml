@@ -1,0 +1,40 @@
+name: Create Q5_archive_date.txt
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  create_and_push_file:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up date
+      id: date
+      run: echo "current_date=$(date +'%d-%m-%Y')" >> $GITHUB_ENV
+
+    - name: Copy and update Q5.java
+      run: |
+        cp Q4.java Q5.java
+        sed -i 's/class Q4/class Q5/' Q5.java
+
+    - name: Create Q5_archive_date.txt
+      run: |
+        echo "Nom: Scarlet76" > Q5_archive_${{ env.current_date }}.txt
+        echo "Fichier Q5.java :" >> Q5_archive_${{ env.current_date }}.txt
+        cat Q5.java >> Q5_archive_${{ env.current_date }}.txt
+
+    - name: Commit and push changes
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git config --global user.name "Scarlet76"
+        git config --global user.email "scarlet0ciel0@gmail.com"
+        git add Q5.java Q5_archive_${{ env.current_date }}.txt
+        git commit -m "Création Q5.java et Q5_archive_${{ env.current_date }}.txt"
+        git push
